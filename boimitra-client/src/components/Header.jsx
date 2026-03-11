@@ -15,7 +15,7 @@ export default function Header() {
         <li><a>blog</a></li>
       </ul>
     </div>
-    <p className=" text-xl font-semibold text-blue-800">BoiMitra</p>
+    <p className=" text-xl font-semibold text-blue-800 ">BoiMitra</p>
   </div>
   <div className="navbar-center hidden lg:flex">
     <ul className="menu menu-horizontal px-1">
@@ -25,7 +25,7 @@ export default function Header() {
     </ul>
   </div>
   <div className="navbar-end">
-    <a className="btn btn-outline hover:bg-blue-800 border border-blue-800">Login</a>
+    <a className="btn btn-outline hover:bg-blue-800 border border-blue-800 rounded-4xl px-8">Login</a>
   </div>
 </div>
   )
