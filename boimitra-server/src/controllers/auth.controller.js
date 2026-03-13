@@ -11,7 +11,7 @@ const generateToken = (id) => {
 
 exports.register = async (req, res) => {
     try {
-        const { name, email, password, university, city } = req.body;
+        const { name, email, password, city } = req.body;
 
         // Basic validation
         if (!name || !email || !password) {
@@ -29,7 +29,6 @@ exports.register = async (req, res) => {
             name,
             email,
             password,
-            university,
             city
         });
 
@@ -41,7 +40,7 @@ exports.register = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
-                university: user.university
+                city: user.city
             }
         });
 
@@ -80,7 +79,7 @@ exports.login = async (req, res) => {
             user: {
                 id: user._id,
                 name: user.name,
-                university: user.university
+                city: user.city
             }
         });
 
