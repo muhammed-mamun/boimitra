@@ -2,7 +2,7 @@ import { FaArrowRight } from "react-icons/fa6";
 
 export default function Hero() {
   return (
-    <div className="my-20 flex flex-col items-center mx-auto text-center p-4">
+    <div className="my-20 flex flex-col items-center mx-auto text-center px-4">
   <div className="hero-overlay"></div>
   <div className="hero-content text-neutral-content text-center">
     <div className="max-w-md">
