@@ -1,0 +1,30 @@
+const express = require('express');
+const {
+    getBooks,
+    getBookById,
+    createBook,
+    updateBook,
+    deleteBook,
+    requestBook,
+    getWaitlist,
+    submitReviewAndHandoff
+} = require('../controllers/book.controller');
+const { protect } = require('../middlewares/auth.middleware');
+
+const router = express.Router();
+
+// Public routes
+router.get('/', getBooks);
+router.get('/:id', getBookById);
+router.get('/:id/waitlist', getWaitlist);
+
+// Protected routes
+router.use(protect); // Applies auth to all routes below this line
+router.post('/', createBook);
+router.put('/:id', updateBook);
+router.delete('/:id', deleteBook);
+
+router.post('/:id/request', requestBook);
+router.post('/:id/review', submitReviewAndHandoff);
+
+module.exports = router;

@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 
 // Import routes
-const authRoutes = require('./routes/auth.route');
+const routes = require('./routes');
 
 // Import middlewares
 const logger = require('./middlewares/logger.middleware');
@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(logger);
 
 // Mount routes
-app.use('/api/auth', authRoutes);
+app.use('/api', routes);
 
 // Basic root path for sanity check
 app.get('/', (req, res) => {
