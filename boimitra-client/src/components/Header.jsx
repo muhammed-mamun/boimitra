@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
-    <div className="navbar bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 border-b border-slate-800/80 text-slate-200">
+    <div className="navbar mx-auto bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 border-b border-slate-800/80 text-slate-200">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost text-slate-300 lg:hidden">

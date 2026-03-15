@@ -14,6 +14,106 @@ exports.getBooks = async (req, res) => {
     }
 };
 
+// @desc    Get all distinct categories
+// @route   GET /api/books/categories
+// @access  Public
+exports.getCategories = async (req, res) => {
+    try {
+        const categories = await Book.distinct('category');
+        // Filter out null/undefined/empty
+        const validCategories = categories.filter(c => c && c.trim().length > 0);
+        res.status(200).json(validCategories.sort());
+    } catch (error) {
+        console.error('getCategories error:', error);
+        res.status(500).json({ message: 'Server error fetching categories', error: error.message });
+    }
+};
+
+// @desc    Get data for Journey Map (Stats and Most Travelled Book)
+// @route   GET /api/books/journey-map-data
+// @access  Public
+exports.getJourneyMapData = async (req, res) => {
+    try {
+        const users = await User.find();
+        const books = await Book.find();
+
+        const stats = {
+            'Dhaka': { nameBn: 'ঢাকা', readers: 0, books: 0, handoffs: 0 },
+            'Chittagong': { nameBn: 'চট্টগ্রাম', readers: 0, books: 0, handoffs: 0 },
+            'Rajshahi': { nameBn: 'রাজশাহী', readers: 0, books: 0, handoffs: 0 },
+            'Khulna': { nameBn: 'খুলনা', readers: 0, books: 0, handoffs: 0 },
+            'Barisal': { nameBn: 'বরিশাল', readers: 0, books: 0, handoffs: 0 },
+            'Sylhet': { nameBn: 'সিলেট', readers: 0, books: 0, handoffs: 0 },
+            'Rangpur': { nameBn: 'রংপুর', readers: 0, books: 0, handoffs: 0 },
+            'Mymensingh': { nameBn: 'ময়মনসিংহ', readers: 0, books: 0, handoffs: 0 },
+        };
+
+        // Aggregating readers per division
+        users.forEach(u => {
+            if (stats[u.city]) stats[u.city].readers++;
+        });
+
+        let mostTravelledBook = null;
+        let maxJumps = -1;
+
+        // Aggregating active books and handoffs
+        books.forEach(b => {
+            const currentDiv = b.current_holder?.city;
+            if (currentDiv && stats[currentDiv]) stats[currentDiv].books++;
+
+            b.journey.forEach(j => {
+                if (stats[j.city]) stats[j.city].handoffs++;
+            });
+
+            if (b.journey.length > maxJumps) {
+                maxJumps = b.journey.length;
+                mostTravelledBook = b;
+            }
+        });
+
+        let featuredJourney = [];
+        let bookTitle = "No Book Travelling Yet";
+
+        if (mostTravelledBook && mostTravelledBook.journey.length > 0) {
+            bookTitle = mostTravelledBook.title;
+
+            let previousLoc = 'Dhaka'; // Default starting point
+            if (mostTravelledBook.owner_id) {
+                const owner = users.find(u => u._id.toString() === mostTravelledBook.owner_id.toString());
+                if (owner && owner.city) previousLoc = owner.city;
+            }
+
+            mostTravelledBook.journey.forEach((j, idx) => {
+                featuredJourney.push({
+                    id: j._id?.toString() || idx.toString(),
+                    from: previousLoc,
+                    to: j.city,
+                    reader: j.name,
+                    date: j.to ? new Date(j.to).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Unknown',
+                    review: j.review
+                });
+                previousLoc = j.city;
+            });
+
+            if (mostTravelledBook.current_holder) {
+                featuredJourney.push({
+                    id: 'current',
+                    from: previousLoc,
+                    to: mostTravelledBook.current_holder.city,
+                    reader: mostTravelledBook.current_holder.name,
+                    date: mostTravelledBook.current_holder.received_at ? new Date(mostTravelledBook.current_holder.received_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'Now',
+                    review: 'Currently Reading...'
+                });
+            }
+        }
+
+        res.status(200).json({ stats, featuredJourney, bookTitle });
+    } catch (error) {
+        console.error('getJourneyMapData error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
 // @desc    Get single book details including journey
 // @route   GET /api/books/:id
 // @access  Public

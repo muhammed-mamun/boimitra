@@ -1,10 +1,13 @@
 import { FaBookOpen, FaUserClock, FaMapMarkerAlt } from 'react-icons/fa';
 
+import { Link } from 'react-router-dom';
+
 export default function BookCard({ book }) {
     return (
-        <div
+        <Link
+            to={`/books/${book._id}`}
             key={book._id}
-            className="card bg-slate-900 border border-slate-800 shadow-xl hover:-translate-y-1 transition-all duration-300"
+            className="card bg-slate-900 border border-slate-800 shadow-xl hover:-translate-y-1 transition-all duration-300 block"
         >
             <figure className="relative h-64 bg-slate-800 w-full overflow-hidden">
                 {book.cover_url ? (
@@ -65,6 +68,6 @@ export default function BookCard({ book }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </Link>
     );
 }

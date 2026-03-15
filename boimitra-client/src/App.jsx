@@ -6,6 +6,8 @@ import Hero from './components/Hero'
 import PopularBooks from './components/Popularbooks'
 import BooksPage from './pages/BooksPage'
 import ErrorPage from './pages/ErrorPage'
+import BookDetailsPage from './pages/BookDetailsPage'
+import LoginPage from './pages/LoginPage'
 
 function Home() {
   return (
@@ -25,6 +27,8 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: 'books', element: <BooksPage /> },
+      { path: 'books/:id', element: <BookDetailsPage /> },
+      { path: 'login', element: <LoginPage /> },
     ],
   },
 ])

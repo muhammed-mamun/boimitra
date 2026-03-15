@@ -1,6 +1,8 @@
 const express = require('express');
 const {
     getBooks,
+    getCategories,
+    getJourneyMapData,
     getBookById,
     createBook,
     updateBook,
@@ -15,6 +17,8 @@ const router = express.Router();
 
 // Public routes
 router.get('/', getBooks);
+router.get('/categories', getCategories);
+router.get('/journey-map-data', getJourneyMapData);
 router.get('/:id', getBookById);
 router.get('/:id/waitlist', getWaitlist);
 

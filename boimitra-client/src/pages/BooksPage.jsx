@@ -2,15 +2,10 @@ import { useState, useEffect } from 'react';
 import { FaBookOpen, FaSearch, FaTimes } from 'react-icons/fa';
 import BookCard from '../components/BookCard';
 
-const CATEGORIES = [
-    "All", "Fiction", "Poetry", "History", "Biography",
-    "Philosophy", "Religion", "Science", "Self-Help",
-    "Travel", "Classic", "Mystery", "Romance"
-];
-
 export default function BooksPage() {
     const [books, setBooks] = useState([]);
     const [filtered, setFiltered] = useState([]);
+    const [categories, setCategories] = useState(['All']);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [activeCategory, setActiveCategory] = useState('All');
@@ -24,6 +19,10 @@ export default function BooksPage() {
                 const data = await response.json();
                 setBooks(data);
                 setFiltered(data);
+
+                // Extract unique categories from loaded books
+                const uniqueCats = ['All', ...new Set(data.map(b => b.category).filter(Boolean))].sort();
+                setCategories(uniqueCats);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -89,7 +88,7 @@ export default function BooksPage() {
 
                 {/* Category Filter Tabs */}
                 <div className="flex flex-wrap gap-2 mb-10">
-                    {CATEGORIES.map(cat => (
+                    {categories.map(cat => (
                         <button
                             key={cat}
                             onClick={() => setActiveCategory(cat)}
