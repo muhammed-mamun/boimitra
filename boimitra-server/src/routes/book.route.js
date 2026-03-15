@@ -19,7 +19,7 @@ router.get('/:id', getBookById);
 router.get('/:id/waitlist', getWaitlist);
 
 // Protected routes
-router.use(protect); // Applies auth to all routes below this line
+router.use(protect);
 router.post('/', createBook);
 router.put('/:id', updateBook);
 router.delete('/:id', deleteBook);
