@@ -1,32 +1,73 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaArrowLeft, FaMapMarkerAlt, FaUserClock, FaBookOpen } from 'react-icons/fa';
 import JourneyMap from '../components/JourneyMap';
+import { useAuth } from '../context/AuthContext';
 
 export default function BookDetailsPage() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
+    const { user, token } = useAuth();
+
     const [book, setBook] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [showMap, setShowMap] = useState(false);
 
-    useEffect(() => {
-        const fetchBookDetails = async () => {
-            try {
-                const response = await fetch(`http://localhost:5000/api/books/${id}`);
-                if (!response.ok) throw new Error('Book not found');
-                const data = await response.json();
-                setBook(data);
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
-            }
-        };
+    const [actionLoading, setActionLoading] = useState(false);
+    const [actionMessage, setActionMessage] = useState(null);
 
+    const fetchBookDetails = async () => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/books/${id}`);
+            if (!response.ok) throw new Error('Book not found');
+            const data = await response.json();
+            setBook(data);
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchBookDetails();
     }, [id]);
+
+    const handleActionClick = async () => {
+        if (!user) {
+            // Include current path so login can route back
+            navigate('/login', { state: { from: location } });
+            return;
+        }
+
+        setActionLoading(true);
+        setActionMessage(null);
+        try {
+            const res = await fetch(`http://localhost:5000/api/books/${id}/request`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const data = await res.json();
+
+            if (!res.ok) throw new Error(data.message || 'Action failed');
+
+            // Re-fetch book to instantly show updated queue
+            await fetchBookDetails();
+
+            setActionMessage({ type: 'success', text: data.message });
+            setTimeout(() => setActionMessage(null), 3000);
+
+        } catch (err) {
+            setActionMessage({ type: 'error', text: err.message });
+        } finally {
+            setActionLoading(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -118,12 +159,19 @@ export default function BookDetailsPage() {
                             </p>
                         </div>
 
+                        {actionMessage && (
+                            <div className={`p-3 rounded-xl mb-4 text-sm font-medium ${actionMessage.type === 'success' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-red-500/20 text-red-500 border border-red-500/30'}`}>
+                                {actionMessage.text}
+                            </div>
+                        )}
+
                         <div className="mt-auto flex flex-col sm:flex-row gap-4">
                             <button
-                                onClick={() => navigate('/login')}
-                                className="btn bg-blue-600 hover:bg-blue-500 text-white rounded-full border-0 px-8"
+                                onClick={handleActionClick}
+                                disabled={actionLoading}
+                                className="btn bg-blue-600 hover:bg-blue-500 text-white rounded-full border-0 px-8 disabled:opacity-50"
                             >
-                                {book.available ? 'Request to Read' : 'Join Waitlist'}
+                                {actionLoading ? <span className="loading loading-spinner"></span> : (book.available ? 'Request to Read' : 'Join Waitlist')}
                             </button>
                             <button
                                 onClick={() => setShowMap(!showMap)}

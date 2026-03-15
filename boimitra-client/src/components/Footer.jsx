@@ -39,7 +39,7 @@ export default function Footer() {
             <div className="max-w-7xl mx-auto mt-8 pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-600 text-xs">
                 <p>© {new Date().getFullYear()} বইমিত্র — Boimitra. All rights reserved.</p>
                 <a
-                    href="https://github.com"
+                    href="https://github.com/muhammed-mamun/boimitra"
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-1.5 hover:text-slate-300 transition-colors"

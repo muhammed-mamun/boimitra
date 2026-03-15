@@ -1,6 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Header() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
   return (
     <div className="navbar mx-auto bg-slate-950/95 backdrop-blur-md sticky top-0 z-50 px-4 border-b border-slate-800/80 text-slate-200">
       <div className="navbar-start">
@@ -39,10 +48,32 @@ export default function Header() {
         </ul>
       </div>
 
-      <div className="navbar-end">
-        <Link to="/" className="btn btn-sm md:btn-md btn-outline border-slate-700 text-slate-300 hover:bg-white hover:text-slate-900 hover:border-white rounded-full px-6 md:px-8 transition-all">
-          Login
-        </Link>
+      <div className="navbar-end gap-3">
+        {user ? (
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/dashboard" className="btn btn-sm btn-ghost text-slate-300 hover:text-white rounded-full transition-all">
+              Dashboard
+            </Link>
+            <span className="text-slate-300 text-sm hidden md:inline-block border-l border-slate-700 pl-4">
+              Hi, <span className="font-bold text-white">{user.name.split(' ')[0]}</span>
+            </span>
+            <button
+              onClick={handleLogout}
+              className="btn btn-sm btn-ghost text-red-400 hover:bg-red-500/10 hover:text-red-300 rounded-full px-4 transition-all"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <>
+            <Link to="/login" className="btn btn-sm btn-ghost text-slate-300 hover:text-white rounded-full px-4 transition-all">
+              Login
+            </Link>
+            <Link to="/register" className="btn btn-sm bg-blue-600 hover:bg-blue-500 text-white border-0 rounded-full px-6 transition-all hidden sm:flex">
+              Sign Up
+            </Link>
+          </>
+        )}
       </div>
     </div>
   );

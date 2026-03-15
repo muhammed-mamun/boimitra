@@ -8,6 +8,9 @@ import BooksPage from './pages/BooksPage'
 import ErrorPage from './pages/ErrorPage'
 import BookDetailsPage from './pages/BookDetailsPage'
 import LoginPage from './pages/LoginPage'
+import RegisterPage from './pages/RegisterPage'
+import DashboardPage from './pages/DashboardPage'
+import { AuthProvider } from './context/AuthContext'
 
 function Home() {
   return (
@@ -29,10 +32,16 @@ const router = createBrowserRouter([
       { path: 'books', element: <BooksPage /> },
       { path: 'books/:id', element: <BookDetailsPage /> },
       { path: 'login', element: <LoginPage /> },
+      { path: 'register', element: <RegisterPage /> },
+      { path: 'dashboard', element: <DashboardPage /> },
     ],
   },
 ])
 
 export default function App() {
-  return <RouterProvider router={router} />
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  )
 }
