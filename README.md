@@ -56,7 +56,7 @@ Each reader holds a book for exactly 7 days. After that, it's couriered to the n
 | React 18 + Vite | UI framework and build tool |
 | React Router v6 | Client-side routing |
 | DaisyUI + Tailwind CSS | Component styling and dark theme |
-| react-simple-maps | Interactive Bangladesh division map |
+| react-leaflet + Leaflet | Interactive Bangladesh division map |
 | React Icons | Icon library |
 
 ### Backend
